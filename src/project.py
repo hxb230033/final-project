@@ -18,9 +18,9 @@ class Player(pygame.sprite.Sprite):
         self.speed = 5
 
     def move(self,keys):
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] and self.rect.x - self.speed >= 0:
             self.rect.x -= self.speed
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_RIGHT] and self.rect.x + self.speed <= 700:
             self.rect.x += self.speed
 
 
@@ -30,7 +30,7 @@ class Player(pygame.sprite.Sprite):
 def main():
     pygame.init()
 
-    player_sprite = Player("player.png", 500, 425)
+    player_sprite = Player("player.png", 350, 425)
 
     run = True
     while run:
