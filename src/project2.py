@@ -31,20 +31,18 @@ class Player(pygame.sprite.Sprite):
         surface.blit(self.image, self.rect)
 
 class Food(pygame.sprite.Sprite):
-    def __init__(self, image_path, x, y, food_type = "fresh"):
+    def __init__(self, image_path, x, y):
         super().__init__()
         self.image = pygame.image.load(image_path)
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
         self.vel = 3
-        self.food_type = food_type
     def update(self):
         self.rect.y += self.vel
     def draw(self, surface):
         surface.blit(self.image, self.rect)
     def is_offscreen(self):
         return self.rect.y > HEIGHT
-
 
 def main():
     pygame.init()
@@ -63,12 +61,9 @@ def main():
         if food_count > food_add_increment:
             for _ in range(1):
                 food_x = random.randint(0, WIDTH - FOOD_WIDTH)
-                if random.random() < 0.1:
-                    food = Food("fish.png", food_x, -50, "rotten")
-                else:    
-                    food_type = ["donut.png", "toast.png", "cupcake.png", "croissant.png"]
-                    food_image = random.choice(food_type)
-                    food = Food(food_image, food_x, -20)
+                food_type = ["donut.png", "toast.png", "cupcake.png", "croissant.png"]
+                food_image = random.choice(food_type)
+                food = Food(food_image, food_x, -20)
                 foods.append(food)
             
             food_add_increment = random.randint(400,900)
@@ -90,14 +85,10 @@ def main():
                 foods.remove(food)
             elif food.rect.colliderect(player.rect):
                 foods.remove(food)
-                if food.food_type == "fresh":
-                    hit = True
-                    score += 1
-                    print(f"score: {score}")
-                    break
-                else:
-                    print ("Game over!")
-                    break
+                hit = True
+                score += 1
+                print(f"score: {score}")
+                break
 
         WIN.blit(BG, (0,0))
         player.draw(WIN)  
