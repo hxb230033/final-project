@@ -45,77 +45,114 @@ class Food(pygame.sprite.Sprite):
     def is_offscreen(self):
         return self.rect.y > HEIGHT
 
+def gameover_screen(score):
+    font_large = pygame.font.Font(None, 74)
+    font_small = pygame.font.Font(None, 36)
+
+    gameover_text = font_large.render("Game over!", True, (255,0,0))
+    score_text = font_small.render(f"score: {score}", True, (255,0,0))
+    retry_text = font_small.render("Press Space Bar to retry", True, (255,0,0))
+    quit_text = font_small.render("Press Q to quit", True, (255,0,0))
+
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    return False
+                if event.key == pygame.K_SPACE:
+                    return True
+        WIN.blit(BG, (0,0))
+        WIN.blit(gameover_text, (WIDTH//2 - gameover_text.get_width()//2, 200))
+        WIN.blit(score_text, (WIDTH//2 - score_text.get_width()//2, 300))
+        WIN.blit(retry_text, (WIDTH//2 - retry_text.get_width()//2, 400))
+        WIN.blit(quit_text, (WIDTH//2 - quit_text.get_width()//2, 450))
+
+        pygame.display.flip()
+        clock.tick(60)
+
 
 def main():
     pygame.init()
 
-    player = Player("player.png", 350, 425)
+    while True:
+        player = Player("player.png", 350, 425)
+        food_add_increment = random.randint(400,900)
+        food_count = 0
+        foods = []
+        score = 0
+        game_over = False
 
-    food_add_increment = random.randint(400,900)
-    food_count = 0
-    foods = []
-    score = 0
+        run = True
+        while run:
+            food_count += clock.tick(60)
 
-    run = True
-    while run:
-        food_count += clock.tick(60)
+            if food_count > food_add_increment:
+                for _ in range(1):
+                    food_x = random.randint(0, WIDTH - FOOD_WIDTH)
+                    if random.random() < 0.1:
+                        food = Food("fish.png", food_x, -50, "rotten")
+                    else:    
+                        food_type = ["donut.png", "toast.png", "cupcake.png", "croissant.png"]
+                        food_image = random.choice(food_type)
+                        food = Food(food_image, food_x, -20)
+                    foods.append(food)
+                
+                food_add_increment = random.randint(400,900)
+                food_count = 0
 
-        if food_count > food_add_increment:
-            for _ in range(1):
-                food_x = random.randint(0, WIDTH - FOOD_WIDTH)
-                if random.random() < 0.1:
-                    food = Food("fish.png", food_x, -50, "rotten")
-                else:    
-                    food_type = ["donut.png", "toast.png", "cupcake.png", "croissant.png"]
-                    food_image = random.choice(food_type)
-                    food = Food(food_image, food_x, -20)
-                foods.append(food)
-            
-            food_add_increment = random.randint(400,900)
-            food_count = 0
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-                break
-    
-        keys = pygame.key.get_pressed()
-        player.move(keys)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                    return
+        
+            keys = pygame.key.get_pressed()
+            player.move(keys)
 
 
-        for food in foods[:]:
-            food.update()
+            for food in foods[:]:
+                food.update()
 
-            if food.is_offscreen():
-                foods.remove(food)
-            elif food.rect.colliderect(player.rect):
-
-                if food.rect.bottom >= player.rect.top and food.rect.bottom <= player.rect.top + 20:
+                if food.is_offscreen():
                     foods.remove(food)
+                elif food.rect.colliderect(player.rect):
 
-                    if food.food_type == "fresh":
-                        hit = True
-                        score += 1
-                        print(f"score: {score}")
-                        break
-                    else:
-                        hit = True
-                        score == 0
-                        print ("Game over!")
-                        run = False
-                        break
+                    if food.rect.bottom >= player.rect.top and food.rect.bottom <= player.rect.top + 20:
+                        foods.remove(food)
 
-        WIN.blit(BG, (0,0))
-        player.draw(WIN)  
+                        if food.food_type == "fresh":
+                            hit = True
+                            score += 1
+                            print(f"score: {score}")
+                            break
+                        else:
+                            hit = True
+                            score == 0
+                            print ("Game over!")
+                            game_over = True
+                            run = False
+                            break
 
-        for food in foods:
-            food.draw(WIN)  
+            WIN.blit(BG, (0,0))
+            player.draw(WIN)  
 
-        font = pygame.font.SysFont(None, 36)
-        score_text = font.render(f"Score: {score}", True, (255,255,255))
-        WIN.blit(score_text, (10,10))
+            for food in foods:
+                food.draw(WIN)  
 
-        pygame.display.flip()
+            font = pygame.font.SysFont(None, 36)
+            score_text = font.render(f"Score: {score}", True, (255,255,255))
+            WIN.blit(score_text, (10,10))
+
+            pygame.display.flip()
+
+        if game_over:
+            restart = gameover_screen(score)
+            if not restart:
+                break
+        else:
+            break
 
     pygame.quit()
 
