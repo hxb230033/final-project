@@ -49,10 +49,10 @@ def gameover_screen(score):
     font_large = pygame.font.Font(None, 74)
     font_small = pygame.font.Font(None, 36)
 
-    gameover_text = font_large.render("Game over!", True, (255,0,0))
-    score_text = font_small.render(f"score: {score}", True, (255,0,0))
-    retry_text = font_small.render("Press Space Bar to retry", True, (255,0,0))
-    quit_text = font_small.render("Press Q to quit", True, (255,0,0))
+    gameover_text = font_large.render("Game over!", True, (200,10,0))
+    score_text = font_small.render(f"score: {score}", True, (255,255,255))
+    retry_text = font_small.render("Press SPACE to retry", True, (255,255,255))
+    quit_text = font_small.render("Press Q to quit", True, (255,255,255))
 
     waiting = True
     while waiting:
@@ -65,6 +65,9 @@ def gameover_screen(score):
                 if event.key == pygame.K_SPACE:
                     return True
         WIN.blit(BG, (0,0))
+        WIN.blit(BG, (0,0))
+        pygame.draw.rect(WIN, (200,10,0), (195,145,610,410))
+        pygame.draw.rect(WIN, (255,193,203), (200,150,600,400))
         WIN.blit(gameover_text, (WIDTH//2 - gameover_text.get_width()//2, 200))
         WIN.blit(score_text, (WIDTH//2 - score_text.get_width()//2, 300))
         WIN.blit(retry_text, (WIDTH//2 - retry_text.get_width()//2, 400))
@@ -97,7 +100,7 @@ def main():
                     else:    
                         food_type = ["donut.png", "toast.png", "cupcake.png", "croissant.png"]
                         food_image = random.choice(food_type)
-                        food = Food(food_image, food_x, -20)
+                        food = Food(food_image, food_x, -20, "fresh")
                     foods.append(food)
                 
                 food_add_increment = random.randint(400,900)
@@ -129,7 +132,6 @@ def main():
                             break
                         else:
                             hit = True
-                            score == 0
                             print ("Game over!")
                             game_over = True
                             run = False
