@@ -89,15 +89,21 @@ def main():
             if food.is_offscreen():
                 foods.remove(food)
             elif food.rect.colliderect(player.rect):
-                foods.remove(food)
-                if food.food_type == "fresh":
-                    hit = True
-                    score += 1
-                    print(f"score: {score}")
-                    break
-                else:
-                    print ("Game over!")
-                    break
+
+                if food.rect.bottom >= player.rect.top and food.rect.bottom <= player.rect.top + 20:
+                    foods.remove(food)
+
+                    if food.food_type == "fresh":
+                        hit = True
+                        score += 1
+                        print(f"score: {score}")
+                        break
+                    else:
+                        hit = True
+                        score == 0
+                        print ("Game over!")
+                        run = False
+                        break
 
         WIN.blit(BG, (0,0))
         player.draw(WIN)  
