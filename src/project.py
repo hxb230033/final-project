@@ -6,12 +6,40 @@ import time
 WIDTH, HEIGHT = 1000, 800
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Kitty Cafe Food Catcher")
+MENU_BG = pygame.image.load("menu_bg.png")
 BG = pygame.image.load("background.png")
 clock = pygame.time.Clock()
 FOOD_WIDTH = 20
 FOOD_HEIGHT = 20
 FOOD_VEL = 1
 
+class Button():
+    def __init__(self, text, x, y, width, height, font, base_color, hover_color):
+        self.text = text
+        self.x_pos = x
+        self.y_pos = y
+        self.width = width
+        self.height = height
+        self.font = font
+        self.base_color = base_color
+        self.hover_color = hover_color
+        self.rect = pygame.Rect(x, y, width, height)
+
+    def draw(self, surface):
+        mouse_pos = pygame.mouse.get_pos()
+        color = self.hover_color if self.rect.collidepoint(mouse_pos) else self.base_color
+        pygame.draw.rect(surface, color, self.rect, border_radius=10)
+
+        text_surface = self.font.render(self.text, True, (255,255,255))
+        text_rect = text_surface.get_rect(center=self.rect.center)
+        surface.blit(text_surface, text_rect)
+    
+    def is_clicked(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.rect.collidepoint(pygame.mouse.get_pos()):
+                return True
+        return False
+    
 class Player(pygame.sprite.Sprite):
     def __init__(self, image_path, x, y):
         super().__init__()
@@ -76,8 +104,56 @@ def gameover_screen(score):
         pygame.display.flip()
         clock.tick(60)
 
+def main_menu():
+    font_title = pygame.font.Font(None,100)
+    font_subtitle = pygame.font.Font(None, 50)
+    font_instructions = pygame.font.Font(None, 30)
 
-def main():
+
+    title_text = font_title.render("Kitty Cafe Food Catcher", True, (255,105,180))
+    
+    lines = [
+        "Move around with the arrow keys and catch falling food!",
+        "Catching food will give you points.",
+        "Avoid the rotten fish!", 
+
+    ]
+
+    play_button = Button("PLAY", WIDTH//2 - 150, 600, 300, 80, font_subtitle, (255,105,180), (255,182,193))
+    quit_button = Button("QUIT", WIDTH//2 - 150, 700, 300, 80, font_subtitle, (255,105,180), (255,182,193))
+
+    while True:
+        WIN.blit(MENU_BG, (0,0))
+        menu_mouse_pos = pygame.mouse.get_pos()
+        WIN.blit(title_text, (WIDTH//2 - title_text.get_width()//2, 200))
+
+        box_y = 250 
+        box_height = len(lines) * 40 + 60
+        pygame.draw.rect(WIN, (255,105,180), (WIDTH//2 - 305, box_y - 5, 610, box_height + 10))
+        pygame.draw.rect(WIN, (255,193,203), (WIDTH//2 - 300, box_y, 600, box_height))
+      
+        y_offset = box_y + 30
+        for line in lines:
+            inst_text = font_instructions.render(line, True, (0,0,0))
+            WIN.blit(inst_text, (WIDTH//2 - inst_text.get_width()//2, y_offset))
+            y_offset += 40
+
+        play_button.draw(WIN)
+        quit_button.draw(WIN)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+            
+            if play_button.is_clicked(event):
+                return "play"
+            if quit_button.is_clicked(event):
+                return "quit"
+            
+        pygame.display.flip()
+        clock.tick(60)
+
+def gameplay():
     pygame.init()
 
     while True:
@@ -128,11 +204,11 @@ def main():
                         if food.food_type == "fresh":
                             hit = True
                             score += 1
-                            print(f"score: {score}")
+                            #print(f"score: {score}")
                             break
                         else:
                             hit = True
-                            print ("Game over!")
+                            #print ("Game over!")
                             game_over = True
                             run = False
                             break
@@ -156,6 +232,30 @@ def main():
         else:
             break
 
+    pygame.quit()
+
+def main():
+    pygame.init()
+    
+    current_state = "menu"
+    
+    while True:
+        if current_state == "menu":
+            result = main_menu()
+            if result == "play":
+                current_state = "play"
+            elif result == "quit":
+                break
+        
+        elif current_state == "play":
+            result = gameplay()
+            if result == "restart":
+                current_state = "play"
+            elif result == "menu":
+                current_state = "menu"
+            elif result == "quit":
+                break
+    
     pygame.quit()
 
 if __name__ == "__main__":
