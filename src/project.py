@@ -2,7 +2,6 @@ import pygame
 import random
 import time
 
-
 WIDTH, HEIGHT = 1000, 800
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Kitty Cafe Food Catcher")
@@ -74,8 +73,8 @@ class Food(pygame.sprite.Sprite):
         return self.rect.y > HEIGHT
 
 def gameover_screen(score):
-    font_large = pygame.font.Font(None, 74)
-    font_small = pygame.font.Font(None, 36)
+    font_large = pygame.font.Font("BoldPixels.ttf", 74)
+    font_small = pygame.font.Font("BoldPixels.ttf", 36)
 
     gameover_text = font_large.render("Game over!", True, (200,10,0))
     score_text = font_small.render(f"score: {score}", True, (255,255,255))
@@ -94,8 +93,8 @@ def gameover_screen(score):
                     return True
         WIN.blit(BG, (0,0))
         WIN.blit(BG, (0,0))
-        pygame.draw.rect(WIN, (200,10,0), (195,145,610,410))
-        pygame.draw.rect(WIN, (255,193,203), (200,150,600,400))
+        pygame.draw.rect(WIN, (255,105,180), (195,145,610,410))
+        pygame.draw.rect(WIN, (255,182,193), (200,150,600,400))
         WIN.blit(gameover_text, (WIDTH//2 - gameover_text.get_width()//2, 200))
         WIN.blit(score_text, (WIDTH//2 - score_text.get_width()//2, 300))
         WIN.blit(retry_text, (WIDTH//2 - retry_text.get_width()//2, 400))
@@ -105,9 +104,9 @@ def gameover_screen(score):
         clock.tick(60)
 
 def main_menu():
-    font_title = pygame.font.Font(None,100)
-    font_subtitle = pygame.font.Font(None, 50)
-    font_instructions = pygame.font.Font(None, 30)
+    font_title = pygame.font.Font("BoldPixels.ttf",90)
+    font_subtitle = pygame.font.Font("BoldPixels.ttf", 30)
+    font_instructions = pygame.font.Font("BoldPixels.ttf", 23)
 
 
     title_text = font_title.render("Kitty Cafe Food Catcher", True, (255,105,180))
@@ -219,8 +218,8 @@ def gameplay():
             for food in foods:
                 food.draw(WIN)  
 
-            font = pygame.font.SysFont(None, 36)
-            score_text = font.render(f"Score: {score}", True, (255,255,255))
+            score_font = pygame.font.SysFont("BoldPixels.ttf", 36)
+            score_text = score_font.render(f"Score: {score}", True, (255,255,255))
             WIN.blit(score_text, (10,10))
 
             pygame.display.flip()
