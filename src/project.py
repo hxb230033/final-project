@@ -127,14 +127,14 @@ def main_menu():
         menu_mouse_pos = pygame.mouse.get_pos()
         WIN.blit(title_text, (WIDTH//2 - title_text.get_width()//2, 200))
 
-        box_y = 250 
+        box_y = 300 
         box_height = len(lines) * 40 + 60
         pygame.draw.rect(WIN, (255,105,180), (WIDTH//2 - 305, box_y - 5, 610, box_height + 10))
         pygame.draw.rect(WIN, (255,193,203), (WIDTH//2 - 300, box_y, 600, box_height))
       
         y_offset = box_y + 30
         for line in lines:
-            inst_text = font_instructions.render(line, True, (0,0,0))
+            inst_text = font_instructions.render(line, True, (255,105,180))
             WIN.blit(inst_text, (WIDTH//2 - inst_text.get_width()//2, y_offset))
             y_offset += 40
 
