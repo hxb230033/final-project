@@ -46,6 +46,8 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
         self.speed = 6
+        self.caught_food = []
+        self.max_stack = 5
 
     def move(self,keys):
         if keys[pygame.K_LEFT] and self.rect.x - self.speed >= 0:
@@ -53,9 +55,31 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_RIGHT] and self.rect.x + self.speed <= WIDTH:
             self.rect.x += self.speed
 
+    def pile_foods(self, food_image):
+        if len(self.caught_food) < self.max_stack:
+            self.caught_food.append(food_image)
+            return True
+        return False
+    
+    def serve_foods(self):
+        points = len(self.caught_food)
+        self.caught_food = []
+        return points
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
+
+        stack_y = self.rect.top - 35
+        for food_img in self.caught_food:
+            surface.blit(food_img, (self.rect.centerx - food_img.get_width()//2, stack_y))
+            stack_y -= 30
+
+class Customer:
+    def __init__(self, image_path, x, y):
+        super().__init__()
+        self.image = pygame.image.load(image_path)
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
 
 class Food(pygame.sprite.Sprite):
     def __init__(self, image_path, x, y, food_type = "fresh"):
