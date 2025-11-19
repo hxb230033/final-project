@@ -281,7 +281,7 @@ def gameplay():
             pygame.display.flip()
 
         if game_over:
-            result = gameover_screen(score)
+            restart = gameover_screen(score)
             if result == "restart":
                 continue
             elif result == "quit":
