@@ -99,33 +99,51 @@ class Food(pygame.sprite.Sprite):
 def gameover_screen(score):
     font_large = pygame.font.Font("BoldPixels.ttf", 74)
     font_small = pygame.font.Font("BoldPixels.ttf", 36)
+    font_subtitle = pygame.font.Font("BoldPixels.ttf", 30)
+
 
     gameover_text = font_large.render("Game over!", True, (200,10,0))
     score_text = font_small.render(f"score: {score}", True, (255,255,255))
-    retry_text = font_small.render("Press SPACE to retry", True, (255,255,255))
-    quit_text = font_small.render("Press Q to quit", True, (255,255,255))
+    #retry_text = font_small.render("Press SPACE to retry", True, (255,255,255))
+    #quit_text = font_small.render("Press Q to quit", True, (255,255,255))
+    retry_button = Button("RETRY", WIDTH//2 - 150, 600, 300, 80, font_subtitle, (255,105,180), (255,182,193))
+    quit_button = Button("QUIT", WIDTH//2 - 150, 700, 300, 80, font_subtitle, (255,105,180), (255,182,193))
 
     waiting = True
-    while waiting:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q:
-                    return False
-                if event.key == pygame.K_SPACE:
-                    return True
+    while waiting:        
         WIN.blit(BG, (0,0))
-        WIN.blit(BG, (0,0))
-        pygame.draw.rect(WIN, (255,105,180), (195,145,610,410))
-        pygame.draw.rect(WIN, (255,182,193), (200,150,600,400))
-        WIN.blit(gameover_text, (WIDTH//2 - gameover_text.get_width()//2, 200))
-        WIN.blit(score_text, (WIDTH//2 - score_text.get_width()//2, 300))
-        WIN.blit(retry_text, (WIDTH//2 - retry_text.get_width()//2, 400))
-        WIN.blit(quit_text, (WIDTH//2 - quit_text.get_width()//2, 450))
+        menu_mouse_pos = pygame.mouse.get_pos()
+        # WIN.blit(title_text, (WIDTH//2 - title_text.get_width()//2, 200))
+        box_x = WIDTH//2 - 300
+        box_y = 180 
+        box_height = 250
+        box_width = 600
+        pygame.draw.rect(WIN, (255,105,180), (box_x - 5, box_y - 5, box_width + 10, box_height + 10))
+        pygame.draw.rect(WIN, (255,193,203), (box_x, box_y, box_width, box_height))
+     
+        #y_offset = box_y + 30
+       #for line in lines:
+        #    inst_text = score_text.render(line, True, (255,105,180))
+        WIN.blit(gameover_text, (WIDTH//2 - gameover_text.get_width()//2, box_y + 20))
+        WIN.blit(score_text, (WIDTH//2 - score_text.get_width()//2, box_y + 120))
+        #    y_offset += 40
 
+        retry_button.draw(WIN)
+        quit_button.draw(WIN)
+            
         pygame.display.flip()
         clock.tick(60)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if retry_button.is_clicked(event):
+                    return "restart"
+                if quit_button.is_clicked(event):
+                    return "quit"
+
+   
 
 def main_menu():
     font_title = pygame.font.Font("BoldPixels.ttf",90)
@@ -167,11 +185,11 @@ def main_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit"
-            
             if play_button.is_clicked(event):
                 return "play"
             if quit_button.is_clicked(event):
                 return "quit"
+                
             
         pygame.display.flip()
         clock.tick(60)
@@ -263,8 +281,10 @@ def gameplay():
             pygame.display.flip()
 
         if game_over:
-            restart = gameover_screen(score)
-            if not restart:
+            result = gameover_screen(score)
+            if result == "restart":
+                continue
+            elif result == "quit":
                 break
         else:
             break
