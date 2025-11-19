@@ -69,10 +69,10 @@ class Player(pygame.sprite.Sprite):
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
-        stack_y = self.rect.top - 35
+        stack_y = self.rect.top - 60
         for food_img in self.caught_food:
             surface.blit(food_img, (self.rect.centerx - food_img.get_width()//2, stack_y))
-            stack_y -= 30
+            stack_y -= 60
 
 class Customer:
     def __init__(self, image_path, x, y):
@@ -213,6 +213,11 @@ def gameplay():
             keys = pygame.key.get_pressed()
             player.move(keys)
 
+            if keys[pygame.K_SPACE]:
+                points = player.serve_foods()
+                if points > 0:
+                    score += points * 2
+
 
             for food in foods[:]:
                 food.update()
@@ -222,11 +227,11 @@ def gameplay():
                 elif food.rect.colliderect(player.rect):
 
                     if food.rect.bottom >= player.rect.top and food.rect.bottom <= player.rect.top + 20:
-                        foods.remove(food)
 
                         if food.food_type == "fresh":
                             hit = True
-                            score += 1
+                            player.pile_foods(food.image)
+                            foods.remove(food)
                             #print(f"score: {score}")
                             break
                         else:
