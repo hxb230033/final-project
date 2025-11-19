@@ -185,6 +185,7 @@ def gameplay():
         food_count = 0
         foods = []
         score = 0
+        lives = 3
         game_over = False
 
         run = True
@@ -223,6 +224,12 @@ def gameplay():
                 food.update()
 
                 if food.is_offscreen():
+                    if food.food_type == "fresh":
+                        lives -= 1
+                        print (f"lives remaining: {lives}")
+                        if lives == 0:
+                            game_over = True
+                            run = False
                     foods.remove(food)
                 elif food.rect.colliderect(player.rect):
 
@@ -250,6 +257,8 @@ def gameplay():
             score_font = pygame.font.SysFont("BoldPixels.ttf", 36)
             score_text = score_font.render(f"Score: {score}", True, (255,255,255))
             WIN.blit(score_text, (10,10))
+            lives_text = score_font.render(f"Lives: {lives}", True, (255,255,255))
+            WIN.blit(lives_text, (10,50))
 
             pygame.display.flip()
 
