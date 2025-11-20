@@ -81,6 +81,12 @@ class Customer:
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 
+    def serve(self,player):
+        if player.caught_food:
+            player.caught_food.pop()
+            self.is_served = True
+            return True
+
 class Food(pygame.sprite.Sprite):
     def __init__(self, image_path, x, y, food_type = "fresh"):
         super().__init__()
@@ -97,36 +103,29 @@ class Food(pygame.sprite.Sprite):
         return self.rect.y > HEIGHT
 
 def gameover_screen(score):
-    font_large = pygame.font.Font("BoldPixels.ttf", 74)
-    font_small = pygame.font.Font("BoldPixels.ttf", 36)
+    font_large = pygame.font.Font("BoldPixels.ttf", 94)
+    font_small = pygame.font.Font("BoldPixels.ttf", 56)
     font_subtitle = pygame.font.Font("BoldPixels.ttf", 30)
 
 
     gameover_text = font_large.render("Game over!", True, (200,10,0))
     score_text = font_small.render(f"score: {score}", True, (255,255,255))
-    #retry_text = font_small.render("Press SPACE to retry", True, (255,255,255))
-    #quit_text = font_small.render("Press Q to quit", True, (255,255,255))
-    retry_button = Button("RETRY", WIDTH//2 - 150, 600, 300, 80, font_subtitle, (255,105,180), (255,182,193))
-    quit_button = Button("QUIT", WIDTH//2 - 150, 700, 300, 80, font_subtitle, (255,105,180), (255,182,193))
+    retry_button = Button("RETRY", WIDTH//2 - 150, 500, 300, 80, font_subtitle, (255,105,180), (255,182,193))
+    quit_button = Button("QUIT", WIDTH//2 - 150, 600, 300, 80, font_subtitle, (255,105,180), (255,182,193))
 
     waiting = True
     while waiting:        
         WIN.blit(BG, (0,0))
-        menu_mouse_pos = pygame.mouse.get_pos()
-        # WIN.blit(title_text, (WIDTH//2 - title_text.get_width()//2, 200))
         box_x = WIDTH//2 - 300
         box_y = 180 
         box_height = 250
         box_width = 600
+        menu_mouse_pos = pygame.mouse.get_pos()
         pygame.draw.rect(WIN, (255,105,180), (box_x - 5, box_y - 5, box_width + 10, box_height + 10))
         pygame.draw.rect(WIN, (255,193,203), (box_x, box_y, box_width, box_height))
-     
-        #y_offset = box_y + 30
-       #for line in lines:
-        #    inst_text = score_text.render(line, True, (255,105,180))
+    
         WIN.blit(gameover_text, (WIDTH//2 - gameover_text.get_width()//2, box_y + 20))
         WIN.blit(score_text, (WIDTH//2 - score_text.get_width()//2, box_y + 120))
-        #    y_offset += 40
 
         retry_button.draw(WIN)
         quit_button.draw(WIN)
@@ -143,8 +142,6 @@ def gameover_screen(score):
                 if quit_button.is_clicked(event):
                     return "quit"
 
-   
-
 def main_menu():
     font_title = pygame.font.Font("BoldPixels.ttf",90)
     font_subtitle = pygame.font.Font("BoldPixels.ttf", 30)
@@ -157,7 +154,6 @@ def main_menu():
         "Move around with the arrow keys and catch falling food!",
         "Catching food will give you points.",
         "Avoid the rotten fish!", 
-
     ]
 
     play_button = Button("PLAY", WIDTH//2 - 150, 600, 300, 80, font_subtitle, (255,105,180), (255,182,193))
@@ -199,8 +195,10 @@ def gameplay():
 
     while True:
         player = Player("player.png", 350, 425)
-        food_add_increment = random.randint(400,900)
-        food_count = 0
+        food_spawn_interval = 1500
+        min_spawn_interval = 800
+        spawn_decrease_rate = 0.2
+        food_spawn_timer = 0
         foods = []
         score = 0
         lives = 3
@@ -208,21 +206,26 @@ def gameplay():
 
         run = True
         while run:
-            food_count += clock.tick(60)
+            #food_count += clock.tick(60)
+            delta_time = clock.tick(60)
 
-            if food_count > food_add_increment:
-                for _ in range(1):
-                    food_x = random.randint(0, WIDTH - FOOD_WIDTH)
-                    if random.random() < 0.1:
-                        food = Food("fish.png", food_x, -50, "rotten")
-                    else:    
-                        food_type = ["donut.png", "toast.png", "cupcake.png", "croissant.png"]
-                        food_image = random.choice(food_type)
-                        food = Food(food_image, food_x, -20, "fresh")
-                    foods.append(food)
-                
-                food_add_increment = random.randint(400,900)
-                food_count = 0
+            food_spawn_timer += delta_time
+            food_spawn_interval -= spawn_decrease_rate * (delta_time / 1000)
+            food_spawn_interval -= score * 0.2
+            if food_spawn_interval < min_spawn_interval:
+                food_spawn_interval = min_spawn_interval
+            if food_spawn_timer >=  food_spawn_interval:
+                food_spawn_timer = 0
+                food_x = random.randint(0, WIDTH-FOOD_WIDTH)
+
+                if random.random() < 0.10:
+                    food = Food("fish.png", food_x, -50, "rotten")
+                else:
+                    food_type = ["donut.png", "toast.png", "cupcake.png", "croissant.png"]
+                    food_image = random.choice(food_type)
+                    food = Food(food_image, food_x, -20, "fresh")
+
+                foods.append(food)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -281,7 +284,7 @@ def gameplay():
             pygame.display.flip()
 
         if game_over:
-            restart = gameover_screen(score)
+            result = gameover_screen(score)
             if result == "restart":
                 continue
             elif result == "quit":
