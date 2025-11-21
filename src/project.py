@@ -183,7 +183,7 @@ def gameplay():
     while True:
         player = Player("player.png", 350, 425)
         food_spawn_interval = 1500
-        min_spawn_interval = 800
+        min_spawn_interval = 850
         spawn_decrease_rate = 0.2
         food_spawn_timer = 0
         foods = []
@@ -234,7 +234,6 @@ def gameplay():
                 if food.is_offscreen():
                     if food.food_type == "fresh":
                         lives -= 1
-                        print (f"lives remaining: {lives}")
                         if lives == 0:
                             game_over = True
                             run = False
