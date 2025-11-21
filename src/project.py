@@ -74,19 +74,6 @@ class Player(pygame.sprite.Sprite):
             surface.blit(food_img, (self.rect.centerx - food_img.get_width()//2, stack_y))
             stack_y -= 60
 
-class Customer:
-    def __init__(self, image_path, x, y):
-        super().__init__()
-        self.image = pygame.image.load(image_path)
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
-
-    def serve(self,player):
-        if player.caught_food:
-            player.caught_food.pop()
-            self.is_served = True
-            return True
-
 class Food(pygame.sprite.Sprite):
     def __init__(self, image_path, x, y, food_type = "fresh"):
         super().__init__()
@@ -152,8 +139,8 @@ def main_menu():
     
     lines = [
         "Move around with the arrow keys and catch falling food!",
-        "Catching food will give you points.",
-        "Avoid the rotten fish!", 
+        "Catch food and press SPACE to serve food and get points.",
+        "Don't let fresh food fall, and avoid the rotten fish!", 
     ]
 
     play_button = Button("PLAY", WIDTH//2 - 150, 600, 300, 80, font_subtitle, (255,105,180), (255,182,193))
