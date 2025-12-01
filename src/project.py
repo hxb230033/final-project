@@ -104,7 +104,10 @@ def gameover_screen(score):
     quit_button = Button("QUIT", WIDTH//2 - 150, 600, 300, 80, font_subtitle, (255,105,180), (255,182,193))
 
     waiting = True
-    while waiting:        
+    while waiting:  
+        buzzer_sound = pygame.mixer.Sound('buzzer.mp3')
+        buzzer_sound.play()
+      
         WIN.blit(BG, (0,0))
         box_x = WIDTH//2 - 300
         box_y = 180 
@@ -236,6 +239,8 @@ def gameplay():
 
                 if food.is_offscreen():
                     if food.food_type == "fresh":
+                        buzzer_sound = pygame.mixer.Sound('buzzer.mp3')
+                        buzzer_sound.play()
                         lives -= 1
                         if lives == 0:
                             game_over = True
