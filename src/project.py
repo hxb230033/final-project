@@ -97,7 +97,6 @@ def gameover_screen(score):
     font_small = pygame.font.Font("BoldPixels.ttf", 56)
     font_subtitle = pygame.font.Font("BoldPixels.ttf", 30)
 
-
     gameover_text = font_large.render("Game over!", True, (200,10,0))
     score_text = font_small.render(f"score: {score}", True, (255,255,255))
     retry_button = Button("RETRY", WIDTH//2 - 150, 500, 300, 80, font_subtitle, (255,105,180), (255,182,193))
@@ -105,9 +104,6 @@ def gameover_screen(score):
 
     waiting = True
     while waiting:  
-        buzzer_sound = pygame.mixer.Sound('buzzer.mp3')
-        buzzer_sound.play()
-      
         WIN.blit(BG, (0,0))
         box_x = WIDTH//2 - 300
         box_y = 180 
@@ -230,8 +226,10 @@ def gameplay():
 
             if keys[pygame.K_SPACE]:
                 points = player.serve_foods()
+                points_sound = pygame.mixer.Sound('points.mp3')
                 if points > 0:
-                    score += points * 2
+                 points_sound.play()
+                 score += points * 2
 
 
             for food in foods[:]:
@@ -257,6 +255,8 @@ def gameplay():
                             #print(f"score: {score}")
                             break
                         else:
+                            buzzer_sound = pygame.mixer.Sound('buzzer.mp3')
+                            buzzer_sound.play()
                             hit = True
                             #print ("Game over!")
                             game_over = True
