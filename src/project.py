@@ -5,6 +5,7 @@ import time
 WIDTH, HEIGHT = 1000, 800
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Kitty Cafe Food Catcher")
+pygame.mixer.init()
 MENU_BG = pygame.image.load("menu_bg.png")
 BG = pygame.image.load("background.png")
 clock = pygame.time.Clock()
@@ -35,7 +36,9 @@ class Button():
     
     def is_clicked(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            click_sound = pygame.mixer.Sound('button_click.mp3')
             if self.rect.collidepoint(pygame.mouse.get_pos()):
+                click_sound.play()
                 return True
         return False
     
@@ -139,7 +142,7 @@ def main_menu():
     
     lines = [
         "Move around with the arrow keys and catch falling food!",
-        "Catch food and press SPACE to serve food and get points.",
+        "Press SPACE to serve food and get points.",
         "Don't let fresh food fall, and avoid the rotten fish!", 
     ]
 
@@ -282,6 +285,8 @@ def gameplay():
 
 def main():
     pygame.init()
+    pygame.mixer.music.load('music.mp3')
+    pygame.mixer.music.play(-1)
     
     current_state = "menu"
     
