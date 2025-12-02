@@ -1,6 +1,5 @@
 import pygame
 import random
-import time
 
 WIDTH, HEIGHT = 1000, 800
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -175,12 +174,10 @@ def main_menu():
             if quit_button.is_clicked(event):
                 return "quit"
                 
-            
         pygame.display.flip()
         clock.tick(60)
 
 def gameplay():
-    pygame.init()
 
     while True:
         player = Player("player.png", 350, 425)
@@ -195,7 +192,6 @@ def gameplay():
 
         run = True
         while run:
-            #food_count += clock.tick(60)
             delta_time = clock.tick(60)
 
             food_spawn_timer += delta_time
@@ -249,16 +245,12 @@ def gameplay():
                     if food.rect.bottom >= player.rect.top and food.rect.bottom <= player.rect.top + 20:
 
                         if food.food_type == "fresh":
-                            hit = True
                             player.pile_foods(food.image)
                             foods.remove(food)
-                            #print(f"score: {score}")
                             break
                         else:
                             buzzer_sound = pygame.mixer.Sound('buzzer.mp3')
                             buzzer_sound.play()
-                            hit = True
-                            #print ("Game over!")
                             game_over = True
                             run = False
                             break
