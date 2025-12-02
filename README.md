@@ -1,6 +1,6 @@
 # final project: Kitty Cafe Food Catcher
 **link to GitHub repository: https://github.com/hxb230033/final-project.git**
-**Link to video:**
+**Link to video: https://youtu.be/qLUG5jM_osY**
 
 ## Overview
 For my final project, I created a simple food catching video game. I decided to use a pixelated style to match the simplistic mechanics of the game, which I designed and created on [Piskel](piskelapp.com). 
