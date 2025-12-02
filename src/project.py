@@ -72,7 +72,7 @@ class Player(pygame.sprite.Sprite):
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
-        stack_y = self.rect.top - 60
+        stack_y = self.rect.top - 90
         for food_img in self.caught_food:
             surface.blit(food_img, (self.rect.centerx - food_img.get_width()//2, stack_y))
             stack_y -= 60
