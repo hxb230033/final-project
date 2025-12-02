@@ -282,9 +282,9 @@ def gameplay():
             if result == "restart":
                 continue
             elif result == "quit":
-                break
+                return "quit"
         else:
-            break
+            return "quit"
 
     pygame.quit()
 
